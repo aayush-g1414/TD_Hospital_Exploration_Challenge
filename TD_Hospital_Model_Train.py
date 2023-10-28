@@ -25,7 +25,7 @@ def data_preprocessing(df):
     
 def split_feature_label(df):
     y = df['death']
-    X = df.drop(columns=['death', 'pdeath', 'psych4', 'dose'])
+    X = df.drop(columns=['death'])
 
     return y, X
 

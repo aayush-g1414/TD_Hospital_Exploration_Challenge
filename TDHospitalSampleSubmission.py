@@ -26,7 +26,7 @@ class Solution:
         """
         This function should return your final prediction!
         """
-        print("called")
+        # print("called")
         labels = ["timeknown", "cost", "reflex", "sex", "blood", "bloodchem1", "bloodchem2", "temperature", "race",
  "heart", "psych1", "glucose", "psych2", "dose", "psych3", "bp", "bloodchem3", "confidence", "bloodchem4",
  "comorbidity", "totalcost", "breathing", "age", "sleep", "dnr", "bloodchem5", "pdeath", "meals", "pain",
@@ -58,12 +58,12 @@ class Solution:
         # print(X)
         X = X.drop(X[X['race'] == 0].index)
         X = X.drop(X[X['dnr'] == 0].index)
-        X = X.drop(columns=['dose'])
+        #X = X.drop(columns=['dose'])
         X['sex'] = X['sex'].replace(['M', 'Male'], 'male')
         X = X.drop('sex', axis=1)
         # X.head()
         df = X
-        print(X)
+        # print(X)
         # with open('scaler.pkl', 'rb') as scaler_file:
         #     scaler = pickle.load(scaler_file)
         # with open('encoder.pkl', 'rb') as encoder_file:
@@ -76,8 +76,8 @@ class Solution:
         #print(X)
         val = self.model.predict(X[0].reshape(1, -1))[0]
         
-        #
-        return val
+        
+        return float(val)
 
 @app.route("/")
 def hello():
@@ -86,18 +86,18 @@ def hello():
 # BOILERPLATE
 @app.route("/death_probability", methods=["POST"])
 def q1():
-    print("server received request")
+    # print("server received request")
     solution = Solution()
     data = request.get_json()
-    print("server received data", data)
+    # print("server received data", data)
     allEntries = ["timeknown", "cost", "reflex", "sex", "blood", "bloodchem1", "bloodchem2", "temperature", "race",
                              "heart", "psych1", "glucose", "psych2", "dose", "psych3", "bp", "bloodchem3", "confidence", "bloodchem4",
                              "comorbidity", "totalcost", "breathing", "age", "sleep", "dnr", "bloodchem5", "pdeath", "meals", "pain",
                              "primary", "psych4", "disability", "administratorcost", "urine", "diabetes", "income", "extraprimary",
                              "bloodchem6", "education", "psych5", "psych6", "information", "cancer"]
-    for entry in allEntries:
-        if entry not in data:
-            data[entry] = 0
+    # for entry in allEntries:
+    #     if entry not in data:
+    #         data[entry] = 0
     return {
         "probability": solution.calculate_death_prob(data['timeknown'], data['cost'], data['reflex'], data['sex'], data['blood'],
                                             data['bloodchem1'], data['bloodchem2'], data['temperature'], data['race'],
@@ -113,4 +113,4 @@ def q1():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5555, debug=True)
+    app.run(host="0.0.0.0", port=5555)
