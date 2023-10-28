@@ -38,37 +38,6 @@ def train_model(X, y):
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
     X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, test_size=.3, random_state=42)
 
-    # Define the neural network model
-    model = keras.Sequential([
-        layers.Input(shape=(X_train.shape[1],)),  # Input layer 
-        layers.Dense(128, activation='relu'),     # Hidden layer with 128 neurons and ReLU activation
-        layers.Dense(64, activation='relu'),      # Another hidden layer with 64 neurons and ReLU activation
-        layers.Dense(1, activation='sigmoid')     # Output layer with sigmoid activation for binary classification
-    ])
-
-    # Compile the model
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-
-    # Train the model
-    history = model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(X_val, y_val))
-
-    # Evaluate the model on the test set
-    test_loss, test_accuracy = model.evaluate(X_test, y_test)
-    
-    model.save('example.h5')
-    
-    print(f'Test accuracy: {test_accuracy}')
-
-    # Optionally, you can plot training history to visualize model performance
-    import matplotlib.pyplot as plt
-
-    plt.plot(history.history['accuracy'], label='accuracy')
-    plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.ylim([0, 1])
-    plt.legend(loc='lower right')
-    plt.show()
 
 
 
