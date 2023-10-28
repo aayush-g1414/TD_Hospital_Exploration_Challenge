@@ -25,20 +25,40 @@ def data_preprocessing(df):
     
 def split_feature_label(df):
     y = df['death']
-    X = df.drop(columns=['death'])
+    X = df.drop(columns=['death', 'pdeath', 'psych4', 'dose'])
 
     return y, X
 
 def standardize(X):
+    from sklearn.preprocessing import StandardScaler, OneHotEncoder
+    from sklearn.compose import ColumnTransformer
+    import pickle
+
+    # Standardize numeric columns
     scaler = StandardScaler()
     X_numeric = scaler.fit_transform(X.select_dtypes(include=['float64']))
     X[X.select_dtypes(include=['float64']).columns] = X_numeric
-    X = pd.get_dummies(X, columns = ['race', 'dnr', 'primary', 'disability', 'income', 'extraprimary', 'cancer'])
+
+    # Encode categorical columns using one-hot encoding
+    categorical_columns = ['race', 'dnr', 'primary', 'disability', 'income', 'extraprimary', 'cancer']
+    X[categorical_columns] = X[categorical_columns].astype(str)
+
+    encoder = OneHotEncoder()
+    print(X[categorical_columns].head())
+    # Apply transformations to the columns
+    ct = ColumnTransformer([('encoder', encoder, categorical_columns)], remainder='passthrough')
+    X_transformed = ct.fit_transform(X)
+
+    # Save the scaler and transformer
     scaler_filename = "scaler.pkl"
-    with open(scaler_filename, 'wb') as scaler_file:
+    encoder_filename = "encoder.pkl"
+
+    with open(scaler_filename, 'wb') as scaler_file, open(encoder_filename, 'wb') as encoder_file:
         pickle.dump(scaler, scaler_file)
-    # print(X)
-    return X
+        pickle.dump(ct, encoder_file)
+
+    # Return the transformed X
+    return X_transformed
 
 def train_model(X, y):
     # Split data into training and validation
@@ -47,7 +67,8 @@ def train_model(X, y):
     from sklearn.linear_model import LogisticRegression
     model = LogisticRegression(C=0.1, penalty='l2')
     model.fit(X_train, y_train)
-    # print(model.score(X_test,y_test))
+    print(X_test[0])
+    print(model.score(X_test,y_test))
     pkl_filename = "pickle_model.pkl"
     with open(pkl_filename, 'wb') as file:
         pickle.dump(model, file)
