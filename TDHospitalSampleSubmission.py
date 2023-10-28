@@ -6,7 +6,10 @@ import pickle
 from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
-
+with open('scaler.pkl', 'rb') as scaler_file:
+    scaler = pickle.load(scaler_file)
+with open('encoder.pkl', 'rb') as encoder_file:
+    encoder = pickle.load(encoder_file)
 
 class Solution:
     def __init__(self):
@@ -61,10 +64,10 @@ class Solution:
         # X.head()
         df = X
         print(X)
-        with open('scaler.pkl', 'rb') as scaler_file:
-            scaler = pickle.load(scaler_file)
-        with open('encoder.pkl', 'rb') as encoder_file:
-            encoder = pickle.load(encoder_file)
+        # with open('scaler.pkl', 'rb') as scaler_file:
+        #     scaler = pickle.load(scaler_file)
+        # with open('encoder.pkl', 'rb') as encoder_file:
+        #     encoder = pickle.load(encoder_file)
         X_numeric = scaler.transform(X.select_dtypes(include=['float64']))
         X[X.select_dtypes(include=['float64']).columns] = X_numeric
         # X = pd.get_dummies(X, columns = ['race', 'dnr', 'primary', 'disability', 'income', 'extraprimary', 'cancer'])
