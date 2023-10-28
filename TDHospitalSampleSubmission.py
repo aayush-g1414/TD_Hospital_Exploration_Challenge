@@ -1,10 +1,10 @@
 # Sample participant submission for testing
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import tensorflow as tf
 import pandas as pd
 import random
 
-app = Flask(__name__) # hi aayush
+app = Flask(__name__)
 
 
 class Solution:
@@ -30,14 +30,20 @@ class Solution:
         df.replace('', 0, inplace=True)
         df.fillna(0, inplace=True)
         prediction = self.model.predict(df.to_numpy())
+        print(float(prediction[0][0]))
         return float(prediction[0][0])
 
+@app.route("/")
+def hello():
+    return render_template('index.html')
 
 # BOILERPLATE
 @app.route("/death_probability", methods=["POST"])
 def q1():
+    print("here")
     solution = Solution()
     data = request.get_json()
+    print(data)
     return {
         "probability": solution.calculate_death_prob(data['timeknown'], data['cost'], data['reflex'], data['sex'], data['blood'],
                                             data['bloodchem1'], data['bloodchem2'], data['temperature'], data['race'],
@@ -53,4 +59,4 @@ def q1():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5555)
+    app.run(host="0.0.0.0", port=5555, debug=True)
