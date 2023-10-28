@@ -1,6 +1,5 @@
 # Sample participant submission for testing
 from flask import Flask, jsonify, request, render_template
-import tensorflow as tf
 import pandas as pd
 import random
 
@@ -10,7 +9,8 @@ app = Flask(__name__)
 class Solution:
     def __init__(self):
         #Initialize any global variables here
-        self.model = tf.keras.models.load_model('example.h5')
+       # self.model = tf.keras.models.load_model('example.h5')
+       pass
 
     def calculate_death_prob(self, timeknown, cost, reflex, sex, blood, bloodchem1, bloodchem2, temperature, race,
                              heart, psych1, glucose, psych2, dose, psych3, bp, bloodchem3, confidence, bloodchem4,
