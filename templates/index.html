@@ -5,73 +5,82 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     </head>
     <body>
+        <div>
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age"  value="56">
+        </div>
+        <div>
+            <label for="cost">Blood:</label>
+            <input type="number" id="blood" name="blood" value="20.6992188">
+        </div>
+        <div>
+            <label for="reflex">Reflex:</label>
+            <input type="number" id="reflex" name="reflex"  value="11.22800507">
+        </div>
+        <div>
+            <label for="bloodchem1">Bloodchem1:</label>
+            <input type="number" id="bloodchem1" name="bloodchem1" value="20.6992188">
+        </div>
+        <div>
+            <label for="bloodchem2">Bloodchem2:</label>
+            <input type="number" id="bloodchem2" name="bloodchem2" value="2.199707">
+        </div>
+        <div>
+            <label for="psych1">Psych1:</label>
+            <input type="number" id="psych1" name="psych1" value="4.0">
+        </div>
+        <div>
+            <label for="glucose">Glucose:</label>
+            <input type="number" id="glucose" name="glucose"  value="157.0">
+        </div>
+
+        <!--['age', 'blood', 'reflex', 'bloodchem1', 'bloodchem2', 'psych1', 'glucose']-->
+    
+        <!-- Add more input elements for other features -->
+    
+        
+        
+        <button onclick="fetchData()">Submit</button>
         <div id="output"></div>
         <script>
             const fetchData = async () => {
-  try {
-    const response = await fetch('http://127.0.0.1:5555/death_probability', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-        body: JSON.stringify({
-  "timeknown": 3.0,
-  "cost": 1664.37988,
-  "reflex": 11.22800507,
-  "sex": "Male",
-  "blood": 13.7988281,
-  "bloodchem1": 4.0,
-  "bloodchem2": 0.89990234,
-  "temperature": 36.0,
-  "race": "white",
-  "heart": 71.0,
-  "psych1": 2.0,
-  "glucose": 160.0,
-  "psych2": 0.0,
-  "dose": 5,
-  "psych3": 0.0,
-  "bp": 101.0,
-  "bloodchem3": [0.39996338, null, null, 3.69970703, 0.39996338, 1.0, 0.29998779],
-  "confidence": [4.403556626, 20.26035963, 10.15380623, 26.70067613, 9.962358594, 10.91673477, 4.840885616],
-  "bloodchem4": [12.0, 10.0, 28.0, null, null, null, 13.0],
-  "comorbidity": [6.0, 1.0, 3.0, 1.0, 2.0, 0.0, 4.0],
-  "totalcost": [2471.7988, 20651.7812, 4113.6797, 9094.3281, 7150.9766, 42855.7812, 1268.1865],
-  "breathing": [34.0, 26.0, 13.0, 18.0, 28.0, 10.0, 16.0],
-  "age": 57.94897,
-  "sleep": [7.519531, 7.479492, null, 7.379883, 7.429688, 7.289062, 7.439453],
-  "dnr": ["dnr before sadm", "no dnr", "no dnr", "no dnr", "no dnr", "dnr after sadm", "no dnr"],
-  "bloodchem5": [7.359375, 7.509766, 7.459961, null, null, null, 7.399414],
-  "pdeath": [null, null, null, null, null, null, null],
-  "meals": [142.0, 132.0, 131.0, 121.0, 133.0, 136.0, 139.0],
-  "pain": [2.0, 3.0, 1.0, 1.0, 4.0, 4.0, 7.0],
-  "primary": ["Cirrhosis", "Colon Cancer", "ARF/MOSF w/Sepsis", "Cirrhosis", "COPD", "ARF/MOSF w/Sepsis", "Lung Cancer"],
-  "psych4": [null, null, 1.0, 2.0, 5.0, null, null],
-  "disability": [3525.0, 43200.0, 5894.0, 16717.0, null, 65610.625, 2711.0],
-  "administratorcost": [5360.0, 2570.0, 1690.0, null, null, null, null],
-  "urine": [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-  "diabetes": ["no", "no", "yes", "no", "no", "no", "no"],
-  "income": ["$11-$25k", ">$50k", "under $11k", "$11-$25k", "under $11k", null, "under $11k"],
-  "extraprimary": ["COPD/CHF/Cirrhosis", "Cancer", "ARF/MOSF", "COPD/CHF/Cirrhosis", "COPD/CHF/Cirrhosis", "ARF/MOSF", "Cancer"],
-  "bloodchem6": [null, null, null, null, null, null, null],
-  "education": [167.5, 480.0, 177.125, null, 233.3125, 167.5, 276.1875],
-  "psych5": [20.0, 16.0, 5.0, 12.0, 2.0, 12.0, 8.0],
-  "psych6": [30.0, 11.5, 18.0, 7.0, 7.0, 47.0, 4.0],
-  "information": [2.0, 1.0, 0.0, 1.0, 6.0, 0.0, 0.0],
-  "cancer": [null, "metastatic", "ARF/MOSF", null, "COPD/CHF/Cirrhosis", "ARF/MOSF", "metastatic"],
-  "death": 1.0
-}),
-    });
-    const data = await response.json();
-    // console.log("bruh");
-    console.log(data);
-    document.getElementById("output").innerHTML = data.probability;
-  } catch (error) {
-    console.log(error);
-  }
-};
+                try {
+                    const age = document.getElementById("age").value;
+                    const blood = document.getElementById("blood").value;
+                    const reflex = document.getElementById("reflex").value;
+                    const bloodchem1 = document.getElementById("bloodchem1").value;
+                    const bloodchem2 = document.getElementById("bloodchem2").value;
+                    const psych1 = document.getElementById("psych1").value;
+                    const glucose = document.getElementById("glucose").value;
 
-fetchData();
-            
+                    
+                    // Get values for other features similarly
+                    
+                    const response = await fetch('http://127.0.0.1:5555/death_probability', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            "age": parseFloat(age),
+                            "blood": parseFloat(blood),
+                            "reflex": parseFloat(reflex),
+                            "bloodchem1": parseFloat(bloodchem1),
+                            "bloodchem2": parseFloat(bloodchem2),
+                            "psych1": parseFloat(psych1),
+                            "glucose": parseFloat(glucose),
+
+                            // Include other features with their respective values
+                        }),
+                    });
+                    
+                    const data = await response.json();
+                    console.log(data);
+                    document.getElementById("output").innerHTML = data.probability;
+                } catch (error) {
+                    console.log(error);
+                }
+            };
         </script>
     </body>
 </html>

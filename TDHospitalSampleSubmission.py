@@ -44,6 +44,14 @@ def q1():
     solution = Solution()
     data = request.get_json()
     print(data)
+    allEntries = ["timeknown", "cost", "reflex", "sex", "blood", "bloodchem1", "bloodchem2", "temperature", "race",
+                             "heart", "psych1", "glucose", "psych2", "dose", "psych3", "bp", "bloodchem3", "confidence", "bloodchem4",
+                             "comorbidity", "totalcost", "breathing", "age", "sleep", "dnr", "bloodchem5", "pdeath", "meals", "pain",
+                             "primary", "psych4", "disability", "administratorcost", "urine", "diabetes", "income", "extraprimary",
+                             "bloodchem6", "education", "psych5", "psych6", "information", "cancer"]
+    for entry in allEntries:
+        if entry not in data:
+            data[entry] = None
     return {
         "probability": solution.calculate_death_prob(data['timeknown'], data['cost'], data['reflex'], data['sex'], data['blood'],
                                             data['bloodchem1'], data['bloodchem2'], data['temperature'], data['race'],
