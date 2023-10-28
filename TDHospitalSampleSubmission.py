@@ -2,6 +2,8 @@
 from flask import Flask, jsonify, request, render_template
 import pandas as pd
 import random
+import pickle
+from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
 
@@ -9,8 +11,8 @@ app = Flask(__name__)
 class Solution:
     def __init__(self):
         #Initialize any global variables here
-       # self.model = tf.keras.models.load_model('example.h5')
-       pass
+        with open('pickle_model.pkl', 'rb') as file:
+            self.model = pickle.load(file)
 
     def calculate_death_prob(self, timeknown, cost, reflex, sex, blood, bloodchem1, bloodchem2, temperature, race,
                              heart, psych1, glucose, psych2, dose, psych3, bp, bloodchem3, confidence, bloodchem4,
@@ -21,17 +23,40 @@ class Solution:
         """
         This function should return your final prediction!
         """
-        labels = ['age', 'blood', 'reflex', 'bloodchem1', 'bloodchem2', 'psych1', 'glucose']
-        values = [float(x) for x in [age, blood, reflex, bloodchem1, bloodchem2, psych1, glucose]]
+        print("called")
+        labels = ["timeknown", "cost", "reflex", "sex", "blood", "bloodchem1", "bloodchem2", "temperature", "race",
+ "heart", "psych1", "glucose", "psych2", "dose", "psych3", "bp", "bloodchem3", "confidence", "bloodchem4",
+ "comorbidity", "totalcost", "breathing", "age", "sleep", "dnr", "bloodchem5", "pdeath", "meals", "pain",
+ "primary", "psych4", "disability", "administratorcost", "urine", "diabetes", "income", "extraprimary",
+ "bloodchem6", "education", "psych5", "psych6", "information", "cancer"]
+        values = [float(x) for x in [timeknown, cost, reflex, sex, blood, bloodchem1, bloodchem2, temperature, race,
+                             heart, psych1, glucose, psych2, dose, psych3, bp, bloodchem3, confidence, bloodchem4,
+                             comorbidity, totalcost, breathing, age, sleep, dnr, bloodchem5, pdeath, meals, pain,
+                             primary, psych4, disability, administratorcost, urine, diabetes, income, extraprimary,
+                             bloodchem6, education, psych5, psych6, information, cancer]]
         df = dict()
         for label, value in zip(labels, values):
             df[label] = [value]
         df = pd.DataFrame(df)
         df.replace('', 0, inplace=True)
         df.fillna(0, inplace=True)
-        prediction = self.model.predict(df.to_numpy())
-        print(float(prediction[0][0]))
-        return float(prediction[0][0])
+
+        X = df
+        # print(X)
+        X = X.drop(X[X['race'] == 0].index)
+        X = X.drop(X[X['dnr'] == 0].index)
+        X['sex'] = X['sex'].replace(['M', 'Male'], 'male')
+        X = X.drop('sex', axis=1)
+        # X.head()
+        df = X
+        with open('scaler.pkl', 'rb') as scaler_file:
+            scaler = pickle.load(scaler_file)
+        X_numeric = scaler.fit(X.select_dtypes(include=['float64']))
+        X[X.select_dtypes(include=['float64']).columns] = X_numeric
+        X = pd.get_dummies(X, columns = ['race', 'dnr', 'primary', 'disability', 'income', 'extraprimary', 'cancer'])
+        val = self.model.predict(X)
+        print(val)
+        return val
 
 @app.route("/")
 def hello():
@@ -40,10 +65,10 @@ def hello():
 # BOILERPLATE
 @app.route("/death_probability", methods=["POST"])
 def q1():
-    print("here")
+    print("server received request")
     solution = Solution()
     data = request.get_json()
-    print(data)
+    print("server received data", data)
     allEntries = ["timeknown", "cost", "reflex", "sex", "blood", "bloodchem1", "bloodchem2", "temperature", "race",
                              "heart", "psych1", "glucose", "psych2", "dose", "psych3", "bp", "bloodchem3", "confidence", "bloodchem4",
                              "comorbidity", "totalcost", "breathing", "age", "sleep", "dnr", "bloodchem5", "pdeath", "meals", "pain",
@@ -51,7 +76,7 @@ def q1():
                              "bloodchem6", "education", "psych5", "psych6", "information", "cancer"]
     for entry in allEntries:
         if entry not in data:
-            data[entry] = None
+            data[entry] = 0
     return {
         "probability": solution.calculate_death_prob(data['timeknown'], data['cost'], data['reflex'], data['sex'], data['blood'],
                                             data['bloodchem1'], data['bloodchem2'], data['temperature'], data['race'],
