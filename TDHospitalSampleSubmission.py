@@ -6,16 +6,17 @@ import pickle
 from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
-with open('scaler.pkl', 'rb') as scaler_file:
-    scaler = pickle.load(scaler_file)
-with open('encoder.pkl', 'rb') as encoder_file:
-    encoder = pickle.load(encoder_file)
+
 
 class Solution:
     def __init__(self):
         #Initialize any global variables here
         with open('pickle_model.pkl', 'rb') as file:
             self.model = pickle.load(file)
+        with open('scaler.pkl', 'rb') as scaler_file:
+            self.scaler = pickle.load(scaler_file)
+        with open('encoder.pkl', 'rb') as encoder_file:
+            self.encoder = pickle.load(encoder_file)
 
     def calculate_death_prob(self, timeknown, cost, reflex, sex, blood, bloodchem1, bloodchem2, temperature, race,
                              heart, psych1, glucose, psych2, dose, psych3, bp, bloodchem3, confidence, bloodchem4,
@@ -44,7 +45,7 @@ class Solution:
                 values.append(float(x))
             except:
                 values.append(x)
-
+        print(values)
         df = dict()
         #print(len(labels))
         #print(len(values))
@@ -53,28 +54,45 @@ class Solution:
         df = pd.DataFrame(df)
         df.replace('', 0, inplace=True)
         df.fillna(0, inplace=True)
-
+        
         X = df
+        print(X['age'])
+        print(X['pdeath'])
+        print(X['psych4'])
         # print(X)
         X = X.drop(X[X['race'] == 0].index)
         X = X.drop(X[X['dnr'] == 0].index)
-        #X = X.drop(columns=['dose'])
+        X = X.drop('dose', axis=1)
         X['sex'] = X['sex'].replace(['M', 'Male'], 'male')
         X = X.drop('sex', axis=1)
+        print(X.dtypes)
+        X['pdeath'] = X['pdeath'].astype("float64")
+        X['psych4'] = X['psych4'].astype("float64")
+        
         # X.head()
         df = X
-        # print(X)
+        print("X", X)
         # with open('scaler.pkl', 'rb') as scaler_file:
         #     scaler = pickle.load(scaler_file)
         # with open('encoder.pkl', 'rb') as encoder_file:
         #     encoder = pickle.load(encoder_file)
-        X_numeric = scaler.transform(X.select_dtypes(include=['float64']))
+        print(self.scaler.get_feature_names_out())
+        # print(self.scaler.attributes)
+        # print all of age from X
+        print(X['pdeath'])
+        print(X['psych4'])
+        X_numeric = self.scaler.transform(X.select_dtypes(include=['float64']))
+        print("X_numeric", X_numeric)
         X[X.select_dtypes(include=['float64']).columns] = X_numeric
         # X = pd.get_dummies(X, columns = ['race', 'dnr', 'primary', 'disability', 'income', 'extraprimary', 'cancer'])
-        # print(X)
-        X = encoder.transform(X)
+        print("X")
+        X = self.encoder.transform(X)
         #print(X)
-        val = self.model.predict(X[0].reshape(1, -1))[0]
+        X = X[0].reshape(1, -1)
+        print(X)
+        print(X.shape)
+        val = self.model.predict(X)
+        print(val)
         
         
         return float(val)
@@ -113,4 +131,4 @@ def q1():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5555)
+    app.run(host="0.0.0.0", port=5555, debug=True)
