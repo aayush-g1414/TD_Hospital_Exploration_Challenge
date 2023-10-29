@@ -59,6 +59,8 @@ class Solution:
         print(X['age'])
         print(X['pdeath'])
         print(X['psych4'])
+        print(X['income'])
+
         # print(X)
         X = X.drop(X[X['race'] == 0].index)
         X = X.drop(X[X['dnr'] == 0].index)
@@ -91,7 +93,7 @@ class Solution:
         X = X[0].reshape(1, -1)
         print(X)
         print(X.shape)
-        val = self.model.predict(X)
+        val = self.model.predict(X)[0]
         print(val)
         
         

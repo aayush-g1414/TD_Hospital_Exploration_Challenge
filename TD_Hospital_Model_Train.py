@@ -39,7 +39,7 @@ def split_feature_label(df):
 def standardize(X):
     # Standardize numeric columns
     scaler = StandardScaler()
-    
+    print(X.dtypes)
     X_numeric = scaler.fit((X.select_dtypes(include=['float64'])))
     scaler_filename = "scaler.pkl"
     with open(scaler_filename, 'wb') as scaler_file:
